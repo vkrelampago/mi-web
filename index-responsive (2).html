@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viktor López de Paco - Técnico Informático</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: #2c5f7c;
+            --color-secondary: #1a3d52;
+            --color-accent: #e67e22;
+            --color-text: #2c3e50;
+            --color-light: #ecf0f1;
+            --color-border: #bdc3c7;
+            --color-white: #ffffff;
+            --color-dark: #34495e;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.7;
+            color: var(--color-text);
+            background: #f8f9fa;
+            overflow-x: hidden;
+        }
+
+        /* Páginas con transiciones variadas */
+        .page {
+            min-height: 100vh;
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            pointer-events: none;
+            padding-top: 0;
+        }
+
+        .page.active {
+            opacity: 1;
+            position: relative;
+            pointer-events: auto;
+        }
+
+        /* Transición: Fade Scale (Inicio) */
+        .page[data-transition="fade-scale"] {
+            transform: scale(0.9);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .page[data-transition="fade-scale"].active {
+            transform: scale(1);
+        }
+
+        /* Transición: Slide Right (Sobre Mí) */
+        .page[data-transition="slide-right"] {
+            transform: translateX(-100%);
+            transition: all 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .page[data-transition="slide-right"].active {
+            transform: translateX(0);
+        }
+
+        /* Transición: Fade Up (Experiencia) */
+        .page[data-transition="fade-up"] {
+            transform: translateY(50px);
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .page[data-transition="fade-up"].active {
+            transform: translateY(0);
+        }
+
+        /* Transición: Rotate Slide (Skills) */
+        .page[data-transition="rotate-slide"] {
+            transform: translateX(100%) rotate(5deg);
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .page[data-transition="rotate-slide"].active {
+            transform: translateX(0) rotate(0deg);
+        }
+
+        /* Transición: Slide Down (Formación) */
+        .page[data-transition="slide-down"] {
+            transform: translateY(-100%);
+            transition: all 0.7s cubic-bezier(0.86, 0, 0.07, 1);
+        }
+
+        .page[data-transition="slide-down"].active {
+            transform: translateY(0);
+        }
+
+        /* Transición: Zoom Rotate (Por Qué) */
+        .page[data-transition="zoom-rotate"] {
+            transform: scale(1.3) rotate(-10deg);
+            filter: blur(8px);
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .page[data-transition="zoom-rotate"].active {
+            transform: scale(1) rotate(0deg);
+            filter: blur(0);
+        }
+
+        .page.exit-left {
+            transform: translateX(-100%) scale(0.95);
+            opacity: 0;
+            filter: blur(10px);
+        }
+
+        /* Navegación lateral */
+        nav {
+            background: var(--color-white);
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 250px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 0;
+        }
+
+        .nav-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+        }
+
+        nav ul {
+            display: flex;
+            flex-direction: column;
+            list-style: none;
+            gap: 0.5rem;
+            padding: 0 1rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--color-text);
+            transition: all 0.3s;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            display: block;
+        }
+
+        nav a:hover {
+            color: var(--color-primary);
+            background: rgba(44, 95, 124, 0.1);
+            transform: translateX(5px);
+        }
+
+        nav a.active {
+            color: var(--color-white);
+            background: var(--color-primary);
+        }
+
+        /* Ajustar body para menú lateral */
+        body {
+            margin-left: 250px;
+        }
+
+        /* Hero Section */
+        .hero {
+background: linear-gradient(135deg, #2c5f7c 0%, #1a3d52 100%);
+            color: var(--color-white);
+            padding: 3rem 2rem 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            min-height: calc(100vh - 60px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="none"/><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.05)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-avatar {
+            width: 280px;
+            height: 280px;
+            margin: 0 auto 1.5rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: visible;
+        }
+
+        .hero-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2));
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            letter-spacing: -2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.8;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--color-accent);
+            color: var(--color-white);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+            background: #d35400;
+        }
+
+        .btn-linkedin {
+            background: #0077b5;
+            color: var(--color-white);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-linkedin:hover {
+            background: #006399;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+        }
+
+        .linkedin-icon {
+            font-size: 1.5rem;
+        }
+
+        /* Contacto en Hero */
+        .contact-info {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            font-size: 0.95rem;
+        }
+
+        .contact-info div {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Container General */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Secciones */
+        section {
+            padding: 1.5rem 0;
+        }
+
+        section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--color-primary);
+            text-align: center;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        section h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: var(--color-accent);
+            border-radius: 2px;
+        }
+
+        /* Sobre Mí */
+        #sobre-mi {
+            background: var(--color-white);
+        }
+
+        .sobre-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .sobre-text h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--color-secondary);
+        }
+
+        .sobre-text p {
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+            line-height: 1.8;
+            text-align: justify;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            background: var(--color-white);
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 2px solid var(--color-light);
+            transition: all 0.3s;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            border-color: var(--color-accent);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Experiencia */
+        #experiencia {
+            background: var(--color-light);
+        }
+
+        .experiencia-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .experiencia-card {
+            background: var(--color-white);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 5px solid var(--color-accent);
+            position: relative;
+        }
+
+        .experiencia-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .experiencia-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .experiencia-card:hover::before {
+            opacity: 1;
+        }
+
+        .experiencia-card h3 {
+            color: var(--color-secondary);
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .experiencia-period {
+            color: var(--color-primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .experiencia-card p {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: #6b7280;
+        }
+
+        /* Skills */
+        #skills {
+            background: var(--color-white);
+        }
+
+        .skills-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .skill-category {
+            background: var(--color-white);
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 2px solid var(--color-border);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-category::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+        }
+
+        .skill-category:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+        }
+
+        .skill-category h3 {
+            color: var(--color-secondary);
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .skill-list {
+            list-style: none;
+        }
+
+        .skill-item {
+            padding: 0.75rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            font-size: 0.95rem;
+        }
+
+        .skill-item::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--color-accent);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* Formación */
+        #formacion {
+            background: var(--color-light);
+        }
+
+        .formacion-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .formacion-item {
+            background: var(--color-white);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            border-left: 4px solid var(--color-accent);
+        }
+
+        .formacion-year {
+            color: var(--color-primary);
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .formacion-title {
+            color: var(--color-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .formacion-school {
+            color: #6b7280;
+            font-size: 0.95rem;
+        }
+
+        /* Por qué trabajar conmigo */
+        #por-que {
+            background: var(--color-white);
+        }
+
+        .por-que-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .por-que-card {
+            text-align: center;
+            padding: 2.5rem 2rem;
+            background: var(--color-white);
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .por-que-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+            border-color: var(--color-accent);
+        }
+
+        .por-que-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.2rem;
+            display: inline-block;
+            transition: transform 0.3s;
+        }
+
+        .por-que-card:hover .por-que-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .por-que-card h3 {
+            color: var(--color-secondary);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .por-que-card p {
+            color: #6b7280;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, #1a3d52 0%, #2c5f7c 100%);
+            color: var(--color-white);
+            padding: 3rem 2rem 2rem 2rem;
+            text-align: center;
+            margin-top: 4rem;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-contact {
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-contact a {
+            color: var(--color-accent);
+            text-decoration: none;
+            margin: 0 1rem;
+        }
+
+        .footer-contact a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 1rem 0;
+            }
+
+            body {
+                margin-left: 0;
+            }
+
+            nav ul {
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 0 1rem;
+            }
+
+            .logo {
+                margin-bottom: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .sobre-content {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            section h2 {
+                font-size: 2rem;
+            }
+        }
+
+        /* Stickers decorativos */
+        .sticker {
+            position: absolute;
+            opacity: 0.7;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .sticker-1 {
+            top: 10%;
+            right: 5%;
+            font-size: 4rem;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .sticker-2 {
+            bottom: 15%;
+            left: 5%;
+            font-size: 3.5rem;
+            animation: float 5s ease-in-out infinite reverse;
+        }
+
+        .sticker-3 {
+            top: 40%;
+            right: 10%;
+            font-size: 3rem;
+            animation: float 7s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(5deg);
+            }
+        }
+
+        /* Animaciones de entrada */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-content > * {
+            animation: fadeInUp 0.8s ease-out backwards;
+        }
+
+        .hero-content > *:nth-child(1) { animation-delay: 0.1s; }
+        .hero-content > *:nth-child(2) { animation-delay: 0.2s; }
+        .hero-content > *:nth-child(3) { animation-delay: 0.3s; }
+        .hero-content > *:nth-child(4) { animation-delay: 0.4s; }
+        .hero-content > *:nth-child(5) { animation-delay: 0.5s; }
+        .hero-content > *:nth-child(6) { animation-delay: 0.6s; }
+
+        /* Estilos para página de Contacto */
+        #contacto {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 60px 20px;
+        }
+
+        .contact-header {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .contact-header h2 {
+            font-size: 3em;
+            color: var(--color-primary);
+            margin-bottom: 15px;
+        }
+
+        .contact-header p {
+            font-size: 1.2em;
+            color: var(--color-text);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .contact-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        /* Tarjeta de información */
+        .contact-info-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 100px;
+        }
+
+        .contact-info-card h3 {
+            font-size: 1.8em;
+            color: var(--color-primary);
+            margin-bottom: 25px;
+        }
+
+        .contact-info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-info-item:hover {
+            background: var(--color-light);
+            transform: translateX(10px);
+        }
+
+        .contact-info-item .icon {
+            font-size: 1.8em;
+            margin-right: 15px;
+            min-width: 40px;
+        }
+
+        .contact-info-item .text {
+            flex: 1;
+        }
+
+        .contact-info-item .label {
+            font-size: 0.85em;
+            color: #7f8c8d;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .contact-info-item .value {
+            font-size: 1em;
+            color: var(--color-text);
+            font-weight: 500;
+        }
+
+        .contact-info-item a {
+            color: var(--color-text);
+            text-decoration: none;
+        }
+
+        .contact-info-item a:hover {
+            color: var(--color-primary);
+        }
+
+        .availability-badge {
+            display: inline-flex;
+            align-items: center;
+            background: #d4edda;
+            color: #155724;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+            margin-top: 20px;
+        }
+
+        .availability-badge::before {
+            content: '●';
+            color: #28a745;
+            margin-right: 8px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Formulario de contacto */
+        .contact-form-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .contact-form-card h3 {
+            font-size: 1.8em;
+            color: var(--color-primary);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(44, 95, 124, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px 30px;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(44, 95, 124, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(44, 95, 124, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .form-message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+
+        .form-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .form-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .contact-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-info-card {
+                position: relative;
+                top: 0;
+            }
+
+            .contact-header h2 {
+                font-size: 2.2em;
+            }
+        }
+
+        /* Stickers flotantes para la página de contacto */
+        .contact-sticker {
+            position: absolute;
+            font-size: 3em;
+            opacity: 0.15;
+            animation: float 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .contact-sticker-1 {
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+
+        .contact-sticker-2 {
+            top: 20%;
+            right: 8%;
+            animation-delay: 1s;
+        }
+
+        .contact-sticker-3 {
+            bottom: 15%;
+            left: 10%;
+            animation-delay: 2s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navegación Lateral -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">💻</span>
+                <span>Viktor L. Paco</span>
+            </div>
+            <ul>
+                <li><a href="#" class="nav-link active" data-page="inicio">🏠 Inicio</a></li>
+                <li><a href="#" class="nav-link" data-page="sobre-mi">👤 Sobre Mí</a></li>
+                <li><a href="#" class="nav-link" data-page="experiencia">💼 Experiencia</a></li>
+                <li><a href="#" class="nav-link" data-page="skills">⚙️ Skills</a></li>
+                <li><a href="#" class="nav-link" data-page="formacion">🎓 Formación</a></li>
+                <li><a href="#" class="nav-link" data-page="por-que">✨ Por Qué Yo</a></li>
+                <li><a href="#" class="nav-link" data-page="contacto">📧 Contacto</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Página Inicio -->
+    <div id="inicio" class="page active">
+        <div class="hero">
+            <span class="sticker sticker-1">💡</span>
+            <span class="sticker sticker-2">🚀</span>
+            <span class="sticker sticker-3">⚡</span>
+            <div class="hero-content">
+                <div class="hero-avatar">
+                    <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/50b92a6f-1778-4df7-af21-065c95dacacf" alt="Viktor López de Paco">
+                </div>
+                <h1>Viktor López de Paco</h1>
+                <p class="hero-subtitle">Técnico Informático | Sistemas Microinformáticos y Redes</p>
+                <p class="hero-description">
+                    Profesional técnico especializado en mantenimiento de sistemas, administración de redes y gestión de infraestructura informática. Comprometido con la resolución de problemas complejos y la optimización de procesos tecnológicos mediante soluciones innovadoras y eficaces.
+                </p>
+                <div class="cta-buttons">
+                    <a href="https://www.linkedin.com/in/viktor-lopez-it/" target="_blank" class="btn btn-linkedin">
+                        <span class="linkedin-icon">in</span>
+                        LinkedIn
+                    </a>
+                </div>
+                </div>
+                </div>
+        </div>
+    </div>
+
+    <!-- Página Sobre Mí -->
+    <div id="sobre-mi" class="page">
+        <section id="sobre-mi">
+            <div class="container">
+                <h2>Sobre Mí</h2>
+                <div class="sobre-content">
+                    <div class="sobre-text">
+                        <h3>Perfil Profesional</h3>
+                        <p>
+                            Soy un técnico informático en formación avanzada, actualmente cursando el <strong>Grado Medio en Sistemas Microinformáticos y Redes</strong> en el I.E.S Villa de Alguazas. Combino mi educación académica con experiencia práctica real en entornos profesionales.
+                        </p>
+                        <p>
+                            Mi especialidad abarca la administración de sistemas operativos, configuración de redes, mantenimiento de hardware y soporte técnico de calidad. Poseo una sólida base en infraestructura IT y estoy en constante evolución, adaptándome a las nuevas tecnologías y demandas del mercado.
+                        </p>
+                        <h3>Características Clave</h3>
+                        <p>
+                            <strong>Capacidad resolutiva</strong> ante problemas técnicos complejos, <strong>actitud autodidacta</strong> con alta capacidad de aprendizaje continuo, trabajo eficaz tanto de forma autónoma como en equipo, y un enfoque orientado al detalle y la eficiencia.
+                        </p>
+                    </div>
+                    <div class="stats">
+                        <div class="stat-box">
+                            <div class="stat-number">+2</div>
+                            <div class="stat-label">Años de Formación Técnica</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">8.7</div>
+                            <div class="stat-label">Nota Media Académica</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">168h</div>
+                            <div class="stat-label">Prácticas Completadas</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Página Experiencia -->
+    <div id="experiencia" class="page">
+        <section id="experiencia">
+            <div class="container">
+                <h2>Experiencia Profesional</h2>
+                <div class="experiencia-grid">
+                    <div class="experiencia-card">
+                        <h3>Website Manager - Tienda WordPress WooCommerce</h3>
+                        <div class="experiencia-period">Junio 2025 - Actualidad</div>
+                        <p>
+                            Gestión y mantenimiento integral del sitio web de la tienda. Actualización de plugins, subida y gestión de productos, optimización general de la plataforma WordPress-WooCommerce. Actualización y adaptación del contenido del sitio web en campañas y temporadas como Black Friday, Navidad y otras fechas clave.
+                        </p>
+                    </div>
+                    <div class="experiencia-card">
+                        <h3>Técnico de Taller Informático - CB-System</h3>
+                        <div class="experiencia-period">Mayo 2025 - Junio 2025 (Prácticas FCT - 168h)</div>
+                        <p>
+                            Prácticas profesionales en CB-System, Ceuti (Murcia). Mantenimiento y reparación de ordenadores de sobremesa y portátiles. Sustitución de pantallas y componentes en dispositivos móviles. Instalación de impresoras, SAI y fichadores biométricos en empresas. Montaje de equipos personalizados, configuración de sistemas operativos, desplazamiento a empresas para soporte, testeo y verificación de equipos.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Página Skills -->
+    <div id="skills" class="page">
+        <section id="skills">
+            <div class="container">
+                <h2>Competencias Técnicas</h2>
+                <div class="skills-container">
+                    <div class="skill-category">
+                        <h3>🖥️ Sistemas Operativos</h3>
+                        <ul class="skill-list">
+                            <li class="skill-item">Windows 10/11 (Configuración avanzada)</li>
+                            <li class="skill-item">Windows Server 2019/2022</li>
+                            <li class="skill-item">Linux Ubuntu/Debian (Administración)</li>
+                            <li class="skill-item">Virtualización (VirtualBox, VMware)</li>
+                        </ul>
+                    </div>
+                    <div class="skill-category">
+                        <h3>🌐 Redes y Conectividad</h3>
+                        <ul class="skill-list">
+                            <li class="skill-item">Configuración de redes LAN/WLAN</li>
+                            <li class="skill-item">Protocolos TCP/IP, DNS, DHCP</li>
+                            <li class="skill-item">Switches, routers, puntos de acceso</li>
+                            <li class="skill-item">Diagnóstico de conectividad (ping, tracert)</li>
+                        </ul>
+                    </div>
+                    <div class="skill-category">
+                        <h3>🔧 Hardware y Mantenimiento</h3>
+                        <ul class="skill-list">
+                            <li class="skill-item">Montaje y ensamblaje de equipos</li>
+                            <li class="skill-item">Diagnóstico de averías hardware</li>
+                            <li class="skill-item">Actualización de componentes (RAM, SSD, GPU)</li>
+                            <li class="skill-item">Mantenimiento preventivo y correctivo</li>
+                        </ul>
+                    </div>
+                    <div class="skill-category">
+                        <h3>🔒 Seguridad y Backup</h3>
+                        <ul class="skill-list">
+                            <li class="skill-item">Gestión de copias de seguridad</li>
+                            <li class="skill-item">Antivirus y antimalware corporativo</li>
+                            <li class="skill-item">Políticas de seguridad básicas</li>
+                            <li class="skill-item">Protección de datos y privacidad</li>
+                        </ul>
+                    </div>
+                    <div class="skill-category">
+                        <h3>💼 Soporte y Atención</h3>
+                        <ul class="skill-list">
+                            <li class="skill-item">Soporte técnico nivel 1 y 2</li>
+                            <li class="skill-item">Resolución de incidencias remotas</li>
+                            <li class="skill-item">Documentación técnica clara</li>
+                            <li class="skill-item">Atención al usuario final</li>
+                        </ul>
+                    </div>
+                    <div class="skill-category">
+                        <h3>📊 Herramientas y Software</h3>
+                        <ul class="skill-list">
+                            <li class="skill-item">Microsoft Office 365</li>
+                            <li class="skill-item">Active Directory (conceptos básicos)</li>
+                            <li class="skill-item">TeamViewer, AnyDesk (acceso remoto)</li>
+                            <li class="skill-item">Scripting básico (PowerShell, Bash)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Página Formación -->
+    <div id="formacion" class="page">
+        <section id="formacion">
+            <div class="container">
+                <h2>Formación Académica</h2>
+                <div class="formacion-list">
+                    <div class="formacion-item">
+                        <div class="formacion-year">2024 - 2026 (En curso)</div>
+                        <div class="formacion-title">Grado Medio en Sistemas Microinformáticos y Redes</div>
+                        <div class="formacion-school">I.E.S Villa de Alguazas, Murcia</div>
+                    </div>
+                    <div class="formacion-item">
+                        <div class="formacion-year">2024 - 2025 (En curso)</div>
+                        <div class="formacion-title">Cursos Certificados de Ciberseguridad</div>
+                        <div class="formacion-school">Plataforma SEF (Servicio de Empleo y Formación)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Página Por Qué Trabajar Conmigo -->
+    <div id="por-que" class="page">
+        <section id="por-que">
+            <div class="container">
+                <h2>¿Por Qué Trabajar Conmigo?</h2>
+                <div class="por-que-grid">
+                    <div class="por-que-card">
+                        <div class="por-que-icon">🎯</div>
+                        <h3>Orientado a Resultados</h3>
+                        <p>Enfoque práctico y eficiente en la resolución de problemas técnicos, priorizando siempre la satisfacción del usuario final y la optimización de recursos.</p>
+                    </div>
+                    <div class="por-que-card">
+                        <div class="por-que-icon">📚</div>
+                        <h3>Aprendizaje Continuo</h3>
+                        <p>Pasión por la tecnología y constante actualización en nuevas herramientas, metodologías y tendencias del sector IT para ofrecer soluciones modernas.</p>
+                    </div>
+                    <div class="por-que-card">
+                        <div class="por-que-icon">🤝</div>
+                        <h3>Trabajo en Equipo</h3>
+                        <p>Excelentes habilidades de comunicación y colaboración, capaz de integrarse rápidamente en equipos técnicos y contribuir al éxito colectivo.</p>
+                    </div>
+                    <div class="por-que-card">
+                        <div class="por-que-icon">⚡</div>
+                        <h3>Proactividad y Autonomía</h3>
+                        <p>Iniciativa propia para identificar oportunidades de mejora, anticiparse a problemas potenciales y actuar de forma autónoma cuando la situación lo requiere.</p>
+                    </div>
+                    <div class="por-que-card">
+                        <div class="por-que-icon">🔍</div>
+                        <h3>Atención al Detalle</h3>
+                        <p>Meticulosidad en cada tarea realizada, desde la documentación técnica hasta la configuración de sistemas, garantizando calidad y precisión.</p>
+                    </div>
+                    <div class="por-que-card">
+                        <div class="por-que-icon">💪</div>
+                        <h3>Resiliencia Técnica</h3>
+                        <p>Capacidad demostrada para manejar situaciones de presión, resolver incidencias críticas y mantener la calma ante desafíos técnicos complejos.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+
+    <!-- Página Contacto -->
+    <div id="contacto" class="page">
+        <span class="contact-sticker contact-sticker-1">📧</span>
+        <span class="contact-sticker contact-sticker-2">💬</span>
+        <span class="contact-sticker contact-sticker-3">✉️</span>
+
+        <div class="contact-header">
+            <h2>¡Hablemos!</h2>
+            <p>¿Tienes un proyecto en mente o necesitas soporte técnico? Estoy aquí para ayudarte.</p>
+        </div>
+
+        <div class="contact-wrapper">
+            <!-- Tarjeta de información de contacto -->
+            <div class="contact-info-card">
+                <h3>Información de Contacto</h3>
+
+                <div class="contact-info-item">
+                    <span class="icon">📧</span>
+                    <div class="text">
+                        <span class="label">Email</span>
+                        <a href="mailto:viklopezdepaco@gmail.com" class="value">viklopezdepaco@gmail.com</a>
+                    </div>
+                </div>
+
+                <div class="contact-info-item">
+                    <span class="icon">📱</span>
+                    <div class="text">
+                        <span class="label">Teléfono</span>
+                        <a href="tel:+34644935020" class="value">+34 644 93 50 20</a>
+                    </div>
+                </div>
+
+                <div class="contact-info-item">
+                    <span class="icon">💼</span>
+                    <div class="text">
+                        <span class="label">LinkedIn</span>
+                        <a href="https://www.linkedin.com/in/viktor-lopez-it/" target="_blank" class="value">Viktor López IT</a>
+                    </div>
+                </div>
+
+                <div class="contact-info-item">
+                    <span class="icon">📍</span>
+                    <div class="text">
+                        <span class="label">Ubicación</span>
+                        <span class="value">Murcia, España</span>
+                    </div>
+                </div>
+
+                <div class="availability-badge">
+                    Disponible para proyectos
+                </div>
+            </div>
+
+            <!-- Formulario de contacto -->
+            <div class="contact-form-card">
+                <h3>Envíame un Mensaje</h3>
+                <form action="https://formspree.io/f/xyzrpebl" method="POST" id="contactForm">
+                    <div class="form-group">
+                        <label for="email">Tu Correo Electrónico *</label>
+                        <input type="email" id="email" name="email" required placeholder="tu@correo.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subject">Asunto *</label>
+                        <input type="text" id="subject" name="subject" required placeholder="¿Cuál es el motivo de tu mensaje?">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Tu Mensaje *</label>
+                        <textarea id="message" name="message" required placeholder="Cuéntame con detalle qué necesitas..." rows="6"></textarea>
+                    </div>
+
+                    <div class="form-message" id="formMessage"></div>
+
+                    <button type="submit" class="submit-btn">Enviar Mensaje</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <h3>¿Hablamos?</h3>
+            <div class="footer-contact">
+                <a href="mailto:viklopezdepaco@gmail.com">✉️ viklopezdepaco@gmail.com</a>
+                <a href="tel:+34644935020">📱 +34 644 93 50 20</a>
+                <a href="https://www.linkedin.com/in/viktor-lopez-it/" target="_blank">💼 LinkedIn</a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Viktor López de Paco. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Variables globales
+        const navLinks = document.querySelectorAll('.nav-link');
+        const pages = document.querySelectorAll('.page');
+
+        // Definir transiciones para cada página
+        const pageTransitions = {
+            'inicio': 'fade-scale',
+            'sobre-mi': 'slide-right',
+            'experiencia': 'fade-up',
+            'skills': 'slide-down',
+            'formacion': 'fade-zoom',
+            'por-que': 'rotate-in',
+            'contacto': 'slide-up'
+        };
+
+        // Función para navegar entre páginas
+        function navigateToPage(pageId) {
+            const currentPage = document.querySelector('.page.active');
+            const targetPage = document.getElementById(pageId);
+
+            // Evitar navegar a la misma página
+            if (currentPage === targetPage) return;
+
+            // Aplicar transición específica
+            const transition = pageTransitions[pageId] || 'fade-scale';
+            targetPage.setAttribute('data-transition', transition);
+
+            // Marcar página actual como saliendo
+            currentPage.classList.add('exit-left');
+            currentPage.classList.remove('active');
+
+            // Pequeño delay antes de mostrar nueva página
+            setTimeout(() => {
+                targetPage.classList.add('active');
+                currentPage.classList.remove('exit-left');
+
+                // Scroll suave al inicio
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 100);
+
+            // Actualizar link activo en navegación
+            navLinks.forEach(link => link.classList.remove('active'));
+            document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
+        }
+
+        // Agregar event listeners a todos los links de navegación
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const pageId = link.getAttribute('data-page');
+                navigateToPage(pageId);
+            });
+        });
+
+        // Animación de entrada para tarjetas cuando se hacen visibles
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Aplicar animaciones a todas las tarjetas
+        const cards = document.querySelectorAll('.experiencia-card, .skill-category, .formacion-item, .por-que-card');
+        cards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            observer.observe(card);
+        });
+
+        // Función para manejar el envío del formulario con Formspree
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('.submit-btn');
+            const formMessage = document.getElementById('formMessage');
+
+            // Mostrar estado de envío
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Enviando...';
+            formMessage.className = 'form-message info';
+            formMessage.textContent = '⏳ Enviando tu mensaje...';
+            formMessage.style.display = 'block';
+
+            // Formspree se encargará del envío automáticamente
+            // Aquí solo mostramos feedback visual al usuario
+            setTimeout(() => {
+                formMessage.className = 'form-message success';
+                formMessage.textContent = '✓ ¡Mensaje enviado correctamente! Te responderé pronto.';
+
+                // Restaurar botón después de algunos segundos
+                setTimeout(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Enviar Mensaje';
+
+                    // Limpiar mensaje
+                    setTimeout(() => {
+                        formMessage.style.display = 'none';
+                    }, 3000);
+                }, 2000);
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
